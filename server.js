@@ -4,7 +4,7 @@ const fs = require("fs")
 const db = require('./db/db.json')
 const uniqId = require("uniqid")
 const app = express()
-const PORT = process.env.PORT || 3000
+var PORT = process.env.PORT || 3000
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
