@@ -56,6 +56,24 @@ app.post('/api/notes', (req, res) => {
     })
 })
 
+app.delete('/api/notes/:id', (req, res) => {
+    if (err) {
+        throw err
+    }
+    let savedNotes = JSON.parse(jsondata)
+    const index = savedNotes.findIndex((notes) => {return req.params.id === notes.id})
+    savedNotes.splice(index, 1)
+    console.log(index)
+
+    fs.writeFile('./db/db.json', JSON.stringify(savedNotes), (err) => {
+        if (err) {
+            throw err
+        }
+        console.log("Saved")
+        res.json(JSON.stringify(savedNotes))
+        console.log(savedNotes)
+    })
+})
 app.listen(PORT, () => {
     console.log(`Server listening to http://localhost:${PORT}`)
 })
