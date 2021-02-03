@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(express.static("public"))
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname + 'public/index.html'))
+    res.sendFile(path.join(__dirname + '/public/index.html'))
 })
 
 app.get('/notes', (req, res) => {
@@ -19,7 +19,7 @@ app.get('/notes', (req, res) => {
 })
 
 app.get('/api/notes', (req, res) => {
-    fs.readFile('.db/db.json', 'utf8', (err, data) => {
+    fs.readFile(__dirname + '/db/db.json', 'utf8', (err, data) => {
         if (err) {
             thow (err)
         } else {
@@ -38,16 +38,16 @@ app.post('/api/notes', (req, res) => {
     const newNote = req.body
     const randomId = uniqId
 
-    fs.readFile('./db/db.json', 'utf8', (err, note) => {
+    fs.readFile(__dirname + '/db/db.json', 'utf8', (err, note) => {
         if (err) {
             throw err
         }
-
         let notes = JSON.parse(note)
         req.body.id += randomId
-        notes.push(newNotes)
+        notes.push(newNote)
+        
 
-        fs.writeFile('./db/db.json', JSON.stringify(notes), (err) => {
+        fs.writeFile(__dirname + '/db/db.json', JSON.stringify(notes), (err) => {
             if (err) throw err
             console.log('Saved')
             res.json(notes)
@@ -57,22 +57,31 @@ app.post('/api/notes', (req, res) => {
 })
 
 app.delete('/api/notes/:id', (req, res) => {
-    if (err) {
-        throw err
-    }
-    let savedNotes = JSON.parse(jsondata)
-    const index = savedNotes.findIndex((notes) => {return req.params.id === notes.id})
-    savedNotes.splice(index, 1)
-    console.log(index)
+    // if (err) {
+    //     throw err
+    // }
 
-    fs.writeFile('./db/db.json', JSON.stringify(savedNotes), (err) => {
+    fs.readFile(__dirname + '/db/db.json', 'utf8', (err, note) => {
         if (err) {
             throw err
         }
-        console.log("Saved")
-        res.json(JSON.stringify(savedNotes))
-        console.log(savedNotes)
+        const savedNote = JSON.parse(note)
+        const index = savedNote.findIndex((notes) => {return req.params.id === notes.id})
+        savedNote.splice(index, 1)
+        console.log(index)
+
+        fs.writeFile(__dirname + '/db/db.json', JSON.stringify(savedNote), (err) => {
+            if (err) {
+                throw err
+            }
+            console.log("Saved")
+            res.json(JSON.stringify(savedNote))
+            console.log(savedNote)
     })
+    })
+
+
+
 })
 
 app.listen(PORT, () => {
